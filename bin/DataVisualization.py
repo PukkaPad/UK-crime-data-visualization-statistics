@@ -15,9 +15,6 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 15, 5
 
 
-#import plotly.plotly as py
-#import plotly.graph_objs as go
-
 path = r'./data/'
 all_files = glob.glob(os.path.join(path, "*.csv"))
 frame = pd.DataFrame()
@@ -28,17 +25,14 @@ for file_ in all_files:
     print "reading ", file_
     list_.append(df)
 frame = pd.concat(list_)
-#print frame
 
 frame['Time'] = pd.to_datetime(frame['Month'], format = '%Y-%m')
-#print frame
 
 counter = Counter(frame['Crime type']) # this gives me the total frequency from all the files
-#print counter
+
 
 groupedFrame = frame.groupby(['Time', 'Crime type']).size().reset_index(name='Frequency')
 df = pd.DataFrame(groupedFrame)
-#print test
 
 # this is beautiful!
 pivot_df = df.pivot_table('Frequency', ['Time'], 'Crime type')
@@ -75,21 +69,17 @@ for column in pivot_df:
     
     # #tick_range = np.arange(9000, 15001, 1000)
     # #ax.set_yticks(tick_range)
-    # regarding those two comented lines above, I could set a min and max for y range. It would be the right thing to do. But for some of the crimes, the plots wouldnt look good. So I am not doing it this time.
+    # regarding those two comented lines above, I could set a min and max for y range. It would be a good thing to do as all the plots would show the same range fro y axis. But for some of the crimes, the plots wouldnt look good. So I am not setting up y axis this time.
 
 
     ax_colname.grid(True)
-    # #fig1.tight_layout()
-
+   
     fig_colname.savefig('./plots/ts_' + str(colname) +'.png', orientation = 'portrait')
 
-    # #####################
-    #colname = colname.strip()
-    #print 'Saving ts_',colname,'.png'
     print 'Saving ts_'+str(colname)+'.png'
 
 print 'Done! :-)'
-plt.show()
+#plt.show()
 
 # Plot histogram of all data
 fig_AllData = plt.figure()
@@ -122,14 +112,10 @@ ax = fig.add_subplot(111)
 NUM_COLORS = int(len(pivot_df.columns))
 
 for i in range(NUM_COLORS):
-    #c = [float(i)/float(NUM_COLORS), 0.0, float(NUM_COLORS-i)/float(NUM_COLORS)] #R,G,B
     plt.plot(pivot_df.ix[:,i], next(linecycler))
-    #plt.plot(pivot_df.ix[:,i], color = next(colors))
-    #plt.plot(pivot_df.ix[:,i], color = c)
-    #
+
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    # adjusting spacing
-    #plt.tight_layout()
+
 #plt.show()
 plt.xlabel('Date [Year]')
 plt.ylabel('# of reported crime')
