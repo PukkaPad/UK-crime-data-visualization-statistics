@@ -1,0 +1,6 @@
+*.pyc
+*~
+/tests
+.DS_Store
+/NAME
+/docs
