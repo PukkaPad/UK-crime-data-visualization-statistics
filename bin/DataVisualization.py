@@ -15,18 +15,19 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 15, 5
 
 
-def loadData():
+def loadData(path):
     """
-    Takes a csv file with the following columns: Crime ID, Month, Reported by, Falls within, Longitude, Latitude, Location, LSOA code, LSOA name, Crime type, Last outcome category, Context
+    Takes csv files with the following columns: Crime ID, Month, Reported by, Falls within, Longitude, Latitude, Location, LSOA code, LSOA name, Crime type, Last outcome category, Context
     This file will be turned into a DataFrame.
 
     Args:
-        None
+        Data path
 
     Returns:
         Pandas DataFrame.
     """
-    path = r'../data/'
+
+    # path = r'../data/'
     all_files = glob.glob(os.path.join(path, "*.csv"))
     frame = pd.DataFrame()
     list_ = []
@@ -42,39 +43,37 @@ def loadData():
 
 def counter_df():
     """
-    Takes a data frame and returns a conunter object
+    Takes a data frame and returns a counter object
 
     Args:
         None
 
     Returns:
-        Pandas DataFrame formatted as a pivot table.
+        A python dictionary with key and values, example: Counter({'Anti-social behaviour': 34463, 'Other crime': 28114, 'Violent crime': 11784, 'Burglary': 7897, 'Vehicle crime': 7393, 'Robbery': 2791})
     """
 
-    x = loadData()
-    counter = Counter(x['Crime type']) # this gives me the total frequency from all the files
+    x = loadData(r'../data/')
+    counter = Counter(x['Crime type'])
     return counter
 
 def pivot_df():
     """
-    Takes a csv file with the following columns: Crime ID, Month, Reported by, Falls within, Longitude, Latitude, Location, LSOA code, LSOA name, Crime type, Last outcome category, Context
-    This file will be turned into a DataFrame.
+    Takes a data frame and returns a pivot DataFrame.
 
     Args:
         None
 
     Returns:
-        Pandas DataFrame formatted as a pivot table.
+        Pandas DataFrame formatted as a pivot table. Example: Time Crime type  Anti-social behaviour  Burglary  Other crime  Robbery
     """
 
-    x = loadData()
+    x = loadData(r'../data/')
     groupedFrame = x.groupby(['Time', 'Crime type']).size().reset_index(name='Frequency')
     df = pd.DataFrame(groupedFrame)
-
+    print df
     # this is beautiful!
     pivot_df = df.pivot_table('Frequency', ['Time'], 'Crime type')
     return pivot_df
-
 
 def TimeSeries(data):
     """
@@ -98,6 +97,7 @@ def TimeSeries(data):
         pattern = re.compile(r'\s+')
         colname = re.sub(pattern, '', column)
 
+        #  DatatimeIndex as object
         series[colname] = data[column].index.to_pydatetime()
         years_colname = mdates.YearLocator()
         months_colname = mdates.MonthLocator()
@@ -134,7 +134,7 @@ def BarPlot(data):
     This function generates bar plot showing the number of reported crimes.
 
     Args:
-        data: pandas DataFrame instance.
+        data: dictionary object.
 
     Returns:
         Bar plot that will be saved at a ../plots directory
@@ -148,6 +148,8 @@ def BarPlot(data):
     key = data.keys()
     value = data.values()
 
+    # we only want the indexes
+    # bar width by default is 0.8. I add 0.1 to the left coordinates, so each bar is centered
     xs = [i + 0.1 for i, _ in enumerate(key)]
     plt.bar (xs, data.values(), color = 'black')
 
@@ -163,8 +165,8 @@ def BarPlot(data):
     plt.savefig('../plots/bar_AllCrime.png', orientation = 'portrait', bbox_inches='tight')
     print 'Saved bar_AllCrime.png'
 
-data = counter_df()
-BarPlot(data)
+# data = counter_df()
+# BarPlot(data)
 
-data = pivot_df()
-TimeSeries(data)
+# data = pivot_df()
+# TimeSeries(data)
