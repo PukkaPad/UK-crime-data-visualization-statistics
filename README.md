@@ -14,6 +14,7 @@ Modules and Packages:
 * Numpy
 * Matplotlib
 * re
+* Bokeh
 
 
 ## Usage

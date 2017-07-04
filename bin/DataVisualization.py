@@ -12,6 +12,9 @@ import re
 import textwrap
 from itertools import cycle
 from pylab import rcParams
+from bokeh.plotting import figure, output_file, show, save, reset_output
+from bokeh.charts import Line, Bar
+
 rcParams['figure.figsize'] = 15, 5
 
 
@@ -165,8 +168,55 @@ def BarPlot(data):
     plt.savefig('../plots/bar_AllCrime.png', orientation = 'portrait', bbox_inches='tight')
     print 'Saved bar_AllCrime.png'
 
+def Bokeh_TimeSeries():
+    """
+    This function generates time series of each crime reported.
+
+    Args:
+        None
+
+    Returns:
+        Time series that will be saved at a ../plots directory
+
+    To do:
+        Ckeck if plots directory exists, if it does not, create it.
+    """
+    df = pivot_df()
+    series = dict()
+
+    for column in df:
+
+        output_file("../plots/ts_" + column + ".html", title="Metropolitan Police: " + str(column))
+
+        #remove whitespace from column
+        pattern = re.compile(r'\s+')
+        colname = re.sub(pattern, '', column)
+
+        #  DatatimeIndex as object
+        series[colname] = df[column].index.to_pydatetime()
+
+        p = figure(width=1600, height=350, x_axis_type="datetime")
+        p.line(series[colname], df[column], color='navy')
+
+
+        p.title.text = "Metropolitan Police:" + str(column)
+        p.title.text_font_size = "25px"
+        p.title.align = "center"
+        p.grid.grid_line_alpha=1
+        p.xaxis.axis_label = 'Date'
+        p.yaxis.axis_label = '# of reported crime'
+
+        save(p)
+        print 'Saving ts_'+str(colname)+'.html'
+
+
+    print 'Done! :-)'
+
+
 # data = counter_df()
 # BarPlot(data)
 
 # data = pivot_df()
 # TimeSeries(data)
+
+# Bokeh_TimeSeries()
