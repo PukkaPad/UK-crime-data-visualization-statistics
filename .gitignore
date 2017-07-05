@@ -1,6 +1,11 @@
 *.pyc
 *~
-/tests
+/scrap
 .DS_Store
 /NAME
 /docs
+*.zip
+!data/
+data/*
+bin/__init__.py
+data_test/

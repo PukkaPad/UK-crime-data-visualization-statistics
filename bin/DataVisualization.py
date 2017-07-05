@@ -212,6 +212,44 @@ def Bokeh_TimeSeries():
 
     print 'Done! :-)'
 
+def Bokeh_Bar():
+    """
+    This function generates bar plot showing the number of reported crimes.
+
+    Args:
+
+
+    Returns:
+        Bar plot that will be saved at a ../plots directory
+
+    To do:
+        Ckeck if plots directory exists, if it does not, create it.
+    """
+
+    output_file("../plots/bar_AllCrime.html")
+    data=pd.DataFrame.from_dict(counter_df(), orient='index').reset_index()
+    data = data.rename(columns={'index':'crime', 0:'count'})
+
+    p=Bar (data, 'crime', values = 'count', color='navy', legend = False)
+    p.yaxis.axis_label = '# of reported crime'
+    p.title.text_font_size = "25px"
+    p.title.align = "center"
+    p.title.text = "Metropolitan Police Reported Crime"
+    # remove scientific notation
+    yaxis = p.select(dict(type=Axis, layout="left"))[0]
+    yaxis.formatter.use_scientific = False
+
+
+    annotation = Label(x=60, y=-20, x_units='screen', y_units='screen',
+                 text='* Please note that not all crime type have been recorded for the whole period displayed.\n For example, "Other theft" started appearing on the records by the end of 2011, "Violence and sexual offences" by the beginning of 2013.\n This probably shows an effort for detailing the record of crimes over time.', render_mode='css',
+                 border_line_color='black', border_line_alpha=1.0,
+                 background_fill_color='white', background_fill_alpha=1.0, text_font_size = "8pt")
+
+    p.add_layout(annotation)
+
+    save(p)
+    print 'Saving bar_AllCrime.html'
+    print 'Done! :-)'
 
 # data = counter_df()
 # BarPlot(data)
@@ -220,3 +258,4 @@ def Bokeh_TimeSeries():
 # TimeSeries(data)
 
 # Bokeh_TimeSeries()
+# Bokeh_Bar()
